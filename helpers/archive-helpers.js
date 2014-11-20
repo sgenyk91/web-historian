@@ -28,25 +28,48 @@ exports.initialize = function(pathsObj){
 exports.readListOfUrls = function(callback, url){
   fs.readFile(exports.paths.list, function(err, data){
     var urls = data.toString().split("\n");
-    // console.log("callback", callback(urls, url));
     callback(urls, url);
   });
 };
 
 exports.isUrlInList = function(urls, url){
-  // console.log("urls", urls);
-  // console.log("url", url);
   for (var i = 0; i < urls.length; i++) {
     if (url === urls[i]) return true;
   }
   return false;
 };
 
-exports.addUrlToList = function(){
+exports.addUrlToList = function(data){
+  fs.writeFileSync(exports.paths.list, data.join("\n"));
 };
 
-exports.isURLArchived = function(){
+exports.isURLArchived = function(urls, url){
+  // return fs.readFile(exports.paths.list, function(err, data){
+  //   var urls = data.toString().split("\n");
+  //   for (var i = 0; i < urls.length; i++) {
+  //     if (url === urls[i]) return true;
+  //   }
+  //   return false;
+  // });
+  for (var i = 0; i < urls.length; i++) {
+    if (url === urls[i]) return true;
+  }
+  return false;
 };
 
 exports.downloadUrls = function(){
+
 };
+
+
+
+
+
+
+
+
+
+
+
+
+

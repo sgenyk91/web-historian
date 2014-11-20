@@ -107,17 +107,62 @@ describe("html fetcher helpers", function(){
   it("should have an 'isUrlInList' function", function(done) {
     var urlArray = ["example1.com", "example2.com"];
     var inUrlArray = "example2.com";
-    var answer;
+    var notInUrlArray = "example579834538952.com";
+    var answerPass;
+    var answerFail;
 
     fs.writeFileSync(archive.paths.list, urlArray.join("\n"));
     archive.readListOfUrls(function (urls, url) {
-      answer = archive.isUrlInList(urls, url);
+      answerPass = archive.isUrlInList(urls, url);
+    }, inUrlArray);
+    archive.readListOfUrls(function (urls, url) {
+      answerFail = archive.isUrlInList(urls, url);
+    }, notInUrlArray);
+
+    waitForThen(
+      function() { return answerPass; },
+      function(){
+        expect(answerPass).to.equal(true);
+        expect(answerFail).to.equal(false);
+        done();
+    });
+
+  });
+
+  it("should have an 'addUrlToList' function", function(done) {
+    var urlArray = ["example3.com", "example4.com"];
+    var resultArray;
+
+    archive.addUrlToList(urlArray);
+
+    fs.writeFileSync(archive.paths.list, urlArray.join("\n"));
+    archive.readListOfUrls(function(urls){
+      resultArray = urls;
+    });
+
+    waitForThen(
+      function() { return resultArray; },
+      function(){
+        expect(resultArray).to.deep.equal(urlArray);
+        done();
+    });
+
+  });
+
+  it("should have an 'isURLArchived' function", function(done) {
+    var urlArray = ["example1.com", "example2.com"];
+    var inUrlArray = "example1.com";
+    var answerPass;
+
+    fs.writeFileSync(archive.paths.list, urlArray.join("\n"));
+    archive.readListOfUrls(function (urls, url) {
+      answerPass = archive.isURLArchived(urls, url);
     }, inUrlArray);
 
     waitForThen(
-      function() { return answer; },
+      function() { return answerPass; },
       function(){
-        expect(answer).to.equal(true);
+        expect(answerPass).to.equal(true);
         done();
     });
 
@@ -126,5 +171,20 @@ describe("html fetcher helpers", function(){
   it("should have a 'downloadUrls' function", function(){
     expect(typeof archive.downloadUrls).to.equal('function');
   });
-
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
