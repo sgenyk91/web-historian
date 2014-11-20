@@ -5,18 +5,24 @@ var url = require("url");
 
 var port = 8080;
 var ip = "127.0.0.1";
-// DOES NOT HAVE DEFAULT CORSs
+var headers = helpers.headers;
 
 var router = {
-  "/archives": handler.handleRequest
+  "/": "/index.html",
+  "/styles.css": "/styles.css"
 };
 // var server = http.createServer(handler.handleRequest);
-var server = http.createServer(function(request, response) {
-  var route = router[url.parse(request.url).pathname];
+var server = http.createServer(function(req, res) {
+  // console.log(req.url);
+  var route = router[url.parse(req.url).pathname];
+  // console.log('route', route);
   if (route) {
-    route(request, response);
+    handler.handleRequest(req, res, route);
+    // route(req, res);
   } else {
-    helpers.sendReponse(response, "Not Found", 404);
+    console.log('entering 404');
+    res.writeHead(404, headers);
+    res.end();
   }
 });
 console.log("Listening on http://" + ip + ":" + port);
