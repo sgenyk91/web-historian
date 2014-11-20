@@ -4,7 +4,15 @@
   "main": "web/basic-server.js",
   "author": "Hack Reactor",
   "license": "Copyright 2013, Hack Reactor. All rights reserved.",
-  "dependencies": {},
+  "dependencies": {
+    "chai": "^1.10.0",
+    "cron": "^1.0.5",
+    "mocha": "^2.0.1",
+    "nodemon": "^1.2.1",
+    "q": "^1.1.1",
+    "request": "^2.48.0",
+    "underscore": "^1.7.0"
+  },
   "devDependencies": {
     "chai": "^1.9.0",
     "cron": "^1.0.3",

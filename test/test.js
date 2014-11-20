@@ -104,6 +104,25 @@ describe("html fetcher helpers", function(){
     });
   });
 
+  it("should have an 'isUrlInList' function", function(done) {
+    var urlArray = ["example1.com", "example2.com"];
+    var inUrlArray = "example2.com";
+    var answer;
+
+    fs.writeFileSync(archive.paths.list, urlArray.join("\n"));
+    archive.readListOfUrls(function (urls, url) {
+      answer = archive.isUrlInList(urls, url);
+    }, inUrlArray);
+
+    waitForThen(
+      function() { return answer; },
+      function(){
+        expect(answer).to.equal(true);
+        done();
+    });
+
+  });
+
   it("should have a 'downloadUrls' function", function(){
     expect(typeof archive.downloadUrls).to.equal('function');
   });
