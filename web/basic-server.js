@@ -14,7 +14,7 @@ var router = {
 };
 // var server = http.createServer(handler.handleRequest);
 var server = http.createServer(function(req, res) {
-  // console.log(req.url);
+  console.log(req.url);
   var route = router[url.parse(req.url).pathname];
   // console.log('route', route);
   if (route) {

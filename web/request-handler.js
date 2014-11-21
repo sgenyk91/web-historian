@@ -25,9 +25,12 @@ exports.handleRequest = function (req, res, route) {
           archive.isURLArchived(url, function(exists) {
             if (exists) {
               statusCode = 302;
-              console.log('goes in exists');
-              res.writeHead(statusCode, {Location: '/'+url});
-              res.end();
+              // console.log('goes in exists');
+              fs.readFile(archive.paths.archivedSites+'/'+url, function(err, data) {
+                res.writeHead(statusCode, headers);
+                res.write(data);
+                res.end();
+              });
             } else {
               fs.readFile(archive.paths.siteAssets + '/loading.html', function(err, data) {
                 res.writeHead(statusCode, headers);
