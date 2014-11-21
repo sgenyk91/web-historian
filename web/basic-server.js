@@ -9,6 +9,7 @@ var headers = helpers.headers;
 
 var router = {
   "/": "/index.html",
+  "/loading.html": "loading.html",
   "/styles.css": "/styles.css"
 };
 // var server = http.createServer(handler.handleRequest);

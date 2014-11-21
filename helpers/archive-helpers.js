@@ -25,25 +25,29 @@ exports.initialize = function(pathsObj){
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(callback, url){
+exports.readListOfUrls = function(callback){
   fs.readFile(exports.paths.list, function(err, data){
     var urls = data.toString().split("\n");
-    callback(urls, url);
+    callback(urls);
   });
 };
 
-exports.isUrlInList = function(urls, url){
-  for (var i = 0; i < urls.length; i++) {
-    if (url === urls[i]) return true;
-  }
-  return false;
+exports.isUrlInList = function(url, callback){
+  exports.readListOfUrls(function(urls) {
+    var found = _.any(urls, function(site, i) {
+      return site.match(url);
+    });
+    callback(found);
+  });
 };
 
-exports.addUrlToList = function(data){
-  fs.writeFileSync(exports.paths.list, data.join("\n"));
+exports.addUrlToList = function(url, callback){
+  fs.appendFile(exports.paths.list, url+'\n', function(err, file){
+    callback();
+  });
 };
 
-exports.isURLArchived = function(urls, url){
+exports.isURLArchived = function(url, callback){ //NEED TO CHANGE ARCHIVE
   // return fs.readFile(exports.paths.list, function(err, data){
   //   var urls = data.toString().split("\n");
   //   for (var i = 0; i < urls.length; i++) {
@@ -51,14 +55,19 @@ exports.isURLArchived = function(urls, url){
   //   }
   //   return false;
   // });
-  for (var i = 0; i < urls.length; i++) {
-    if (url === urls[i]) return true;
-  }
-  return false;
+  var sitePath =  path.join(exports.paths.archivedSites, url);
+
+  fs.exists(sitePath, function(exists) {
+    callback(exists);
+  });
 };
 
-exports.downloadUrls = function(){
-
+exports.downloadUrls = function(urls){
+  _.each(urls, function(url) {
+    if(!url){ return; }
+    request('http://' + url).pipe(fs.createWriteStream(exports.paths.archivedSites + "/" + url));
+  });
+  return true;
 };
 
 

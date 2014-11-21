@@ -6,7 +6,7 @@ var fs = require('fs');
 
 var statusCode = 200;
 
-exports.handleRequest = function (req, res,route) {
+exports.handleRequest = function (req, res, route) {
   var headers = helpers.headers;
   // console.log(req);
   if (req.method === 'GET') {
@@ -17,12 +17,35 @@ exports.handleRequest = function (req, res,route) {
     });
   } else if (req.method === 'POST') {
     statusCode = 201;
-    res.writeHead(statusCode, headers);
-    res.end();
-  } else if (req.method === 'OPTIONS') {
-    res.writeHead(statusCode, headers);
-    res.end();
-  } else {
-    res.end();
+    helpers.collectData(req, function(data) {
+      console.log(data);
+      var url = data.split('=')[1];
+      archive.isUrlInList(url, function(found) {
+        if (found) {
+          archive.isURLArchived(url, function(exists) {
+            if (exists) {
+              statusCode = 302;
+              console.log('goes in exists');
+              res.writeHead(statusCode, {Location: '/'+url});
+              res.end();
+            } else {
+              fs.readFile(archive.paths.siteAssets + '/loading.html', function(err, data) {
+                res.writeHead(statusCode, headers);
+                res.write(data);
+                res.end();
+              });
+            }
+          });
+        } else {
+          archive.addUrlToList(url, function() {
+            fs.readFile(archive.paths.siteAssets + '/loading.html', function(err, data) {
+              res.writeHead(statusCode, headers);
+              res.write(data);
+              res.end();
+            });
+          });
+        }
+      });
+    });
   }
 };
