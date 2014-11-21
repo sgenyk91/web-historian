@@ -7,14 +7,21 @@ var fs = require('fs');
 var statusCode = 200;
 
 exports.handleRequest = function (req, res, route) {
+
   var headers = helpers.headers;
-  // console.log(req);
-  if (req.method === 'GET') {
-    fs.readFile(archive.paths.siteAssets + route, function(err, data) {
+
+  var readFileFunction = function(urlPath) {
+    fs.readFile(urlPath, function(err, data) {
       res.writeHead(statusCode, headers);
       res.write(data);
       res.end();
     });
+  };
+
+  // console.log(req);
+  if (req.method === 'GET') {
+    var urlPath = archive.paths.siteAssets + route;
+    readFileFunction(urlPath);
   } else if (req.method === 'POST') {
     statusCode = 201;
     helpers.collectData(req, function(data) {
@@ -25,30 +32,40 @@ exports.handleRequest = function (req, res, route) {
           archive.isURLArchived(url, function(exists) {
             if (exists) {
               statusCode = 302;
-              // console.log('goes in exists');
-              fs.readFile(archive.paths.archivedSites+'/'+url, function(err, data) {
-                res.writeHead(statusCode, headers);
-                res.write(data);
-                res.end();
-              });
+              var urlPath = archive.paths.archivedSites+'/'+url;
+              readFileFunction(urlPath);
             } else {
-              fs.readFile(archive.paths.siteAssets + '/loading.html', function(err, data) {
-                res.writeHead(statusCode, headers);
-                res.write(data);
-                res.end();
-              });
+              var urlPath = archive.paths.siteAssets + '/loading.html';
+              readFileFunction(urlPath);
             }
           });
         } else {
           archive.addUrlToList(url, function() {
-            fs.readFile(archive.paths.siteAssets + '/loading.html', function(err, data) {
-              res.writeHead(statusCode, headers);
-              res.write(data);
-              res.end();
-            });
+            var urlPath = archive.paths.siteAssets + '/loading.html';
+            readFileFunction(urlPath);
           });
         }
       });
     });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
